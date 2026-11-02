@@ -1,0 +1,138 @@
+{
+ "meta": {
+  "date": "2026-11-02",
+  "weekday": "Montag",
+  "generated_at": "2026-11-02T05:12+01:00",
+  "model": "Beispiel",
+  "web_search": true,
+  "tokens_in": 0,
+  "tokens_out": 0,
+  "sample": true,
+  "feed_status": {},
+  "sources": {
+   "de": [
+    {
+     "name": "Tagesschau",
+     "lean": "center",
+     "role": "fact",
+     "access": "free"
+    },
+    {
+     "name": "taz",
+     "lean": "left",
+     "role": "fact",
+     "access": "free"
+    },
+    {
+     "name": "Welt",
+     "lean": "center_right",
+     "role": "fact",
+     "access": "partial"
+    }
+   ]
+  }
+ },
+ "sections": {
+  "de": {
+   "title": "Deutschland",
+   "tageslage": "Beispieltext: Hier steht morgens eine kurze Einordnung der Lage in Deutschland.",
+   "stories": [
+    {
+     "title": "Beispiel: So sieht eine Story aus",
+     "importance": 5,
+     "facts": [
+      "Hier stehen überprüfbare Fakten, die mehrere Quellen übereinstimmend berichten.",
+      "Jede Aussage verweist auf Originalquellen, die du unten antippen kannst."
+     ],
+     "left": "Hier beschreibt das Briefing, wie links verortete Medien das Thema gewichten und deuten, mit Quellenname.",
+     "right": "Hier steht dieselbe Art Beschreibung für rechts verortete Medien, im gleichen Umfang und Ton.",
+     "disputed": "Hier steht, was strittig oder noch unklar ist.",
+     "consulting_angle": null,
+     "paywall_note": null,
+     "sources": [
+      {
+       "name": "Tagesschau",
+       "url": "https://www.tagesschau.de/",
+       "lean": "center",
+       "camp": "center",
+       "role": "fact"
+      },
+      {
+       "name": "taz",
+       "url": "https://taz.de/",
+       "lean": "left",
+       "camp": "left",
+       "role": "fact"
+      },
+      {
+       "name": "Welt",
+       "url": "https://www.welt.de/",
+       "lean": "center_right",
+       "camp": "right",
+       "role": "fact"
+      }
+     ],
+     "unverified": false
+    }
+   ],
+   "blindspots": [
+    {
+     "title": "Beispiel-Blindspot",
+     "side": "rechts",
+     "note": "Hier erscheinen Themen, die nur ein Lager prominent aufgreift.",
+     "sources": []
+    }
+   ],
+   "kurz": [
+    {
+     "title": "Beispiel-Kurzmeldung",
+     "summary": "Ein Satz zur Meldung.",
+     "source": {
+      "name": "Tagesschau",
+      "url": "https://www.tagesschau.de/",
+      "lean": "center",
+      "camp": "center",
+      "role": "fact"
+     }
+    }
+   ]
+  },
+  "world": {
+   "title": "Welt",
+   "tageslage": "Beispieltext für die Weltlage.",
+   "stories": [],
+   "blindspots": [],
+   "kurz": []
+  },
+  "tech": {
+   "title": "Tech",
+   "tageslage": "Beispieltext für Tech.",
+   "stories": [
+    {
+     "title": "Beispiel: Tech-Story mit Consulting-Blick",
+     "importance": 4,
+     "facts": [
+      "Hier steht ein überprüfbarer Technik-Fakt."
+     ],
+     "left": null,
+     "right": null,
+     "disputed": null,
+     "consulting_angle": "Hier steht in ein bis zwei Sätzen, was das für IT-Projekte und Kunden bedeuten kann.",
+     "paywall_note": null,
+     "sources": [
+      {
+       "name": "heise online",
+       "url": "https://www.heise.de/",
+       "lean": "none",
+       "camp": null,
+       "role": "fact"
+      }
+     ],
+     "unverified": false
+    }
+   ],
+   "blindspots": [],
+   "kurz": []
+  }
+ }
+}

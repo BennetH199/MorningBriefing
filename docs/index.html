@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Morgenbriefing</title>
+<meta name="description" content="Tägliches, ausgewogenes Nachrichtenbriefing: Deutschland, Welt, Tech.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Briefing">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#eef1f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121a22" media="(prefers-color-scheme: dark)">
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --ink: #17222d;
+  --muted: #566474;
+  --line: #d3dae2;
+  --accent: #0e6b73;
+  --c-left: #b8761a;
+  --c-center: #7d8895;
+  --c-right: #6b4eb0;
+  --track-left: #d99a35;
+  --track-mid: #b4bcc6;
+  --track-right: #8a6bd0;
+  --warn-bg: #fbf0d9;
+  --warn-ink: #5c4300;
+  --serif: ui-serif, "New York", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --sans: system-ui, -apple-system, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121a22;
+    --surface: #1a242e;
+    --ink: #e8edf2;
+    --muted: #9aa7b5;
+    --line: #2b3744;
+    --accent: #5cc0b8;
+    --c-left: #e3a64a;
+    --c-center: #8c98a6;
+    --c-right: #a88fe3;
+    --track-left: #b9812c;
+    --track-mid: #55616e;
+    --track-right: #7656c0;
+    --warn-bg: #3a2f14;
+    --warn-ink: #f1dca6;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+#app {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 18px 20px calc(88px + env(safe-area-inset-bottom));
+}
+button { font: inherit; color: inherit; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+/* Kopfzeile */
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+h1 { font: 700 30px/1.12 var(--serif); letter-spacing: -0.01em; margin: 0; }
+.stamp { margin: 6px 0 0; font-size: 13px; color: var(--muted); }
+.pill {
+  border: 1px solid var(--line); background: transparent; border-radius: 999px;
+  padding: 9px 16px; font-size: 14px; cursor: pointer; white-space: nowrap; min-height: 40px;
+}
+.pill:hover { background: var(--surface); }
+
+.banner {
+  margin: 18px 0 0; padding: 10px 14px; border-radius: 10px; font-size: 14px;
+  background: var(--warn-bg); color: var(--warn-ink);
+}
+.banner button { background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+
+/* Tageslage */
+.lede { font: 400 18px/1.5 var(--serif); margin: 26px 0 0; max-width: 34em; }
+
+/* Stories */
+.story { margin-top: 40px; }
+.story h3 { font: 650 22px/1.22 var(--serif); margin: 0; letter-spacing: -0.005em; }
+
+.spectrum { margin: 14px 0 6px; }
+.track {
+  position: relative; height: 6px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--track-left), var(--track-mid) 50%, var(--track-right));
+}
+.dot {
+  position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px;
+  border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 2px var(--bg);
+}
+.ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 5px; }
+.spec-note { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.spec-warn { color: var(--warn-ink); background: var(--warn-bg); display: inline-block; padding: 1px 8px; border-radius: 6px; margin-top: 4px; }
+
+.sub { font: 600 13px/1.3 var(--sans); color: var(--muted); margin: 18px 0 6px; }
+.facts { margin: 0; padding-left: 1.15em; }
+.facts li { margin: 5px 0; padding-left: 2px; }
+
+.views { margin-top: 16px; }
+.views > summary {
+  list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  color: var(--accent); font-weight: 600; min-height: 36px;
+}
+.views > summary::-webkit-details-marker { display: none; }
+.views > summary::after {
+  content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translateY(-2px); transition: transform .18s ease;
+}
+.views[open] > summary::after { transform: rotate(-135deg) translate(-2px, 0); }
+.panel { background: var(--surface); border-radius: 14px; padding: 6px 16px 10px; margin-top: 6px; }
+.view { border-left: 3px solid var(--line); padding-left: 12px; margin: 14px 0; }
+.view h4 { margin: 0; font-size: 14px; font-weight: 650; }
+.view p { margin: 3px 0 0; font-size: 15px; }
+.view.left { border-color: var(--c-left); }
+.view.right { border-color: var(--c-right); }
+.view.open { border-color: var(--c-center); }
+.view .none { color: var(--muted); }
+
+.angle { margin-top: 16px; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 10px 10px 0; font-size: 15px; }
+.angle b { display: block; font-size: 13px; color: var(--accent); margin-bottom: 2px; }
+.paywall { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 30px; padding: 4px 11px;
+  border-radius: 999px; background: var(--surface); font-size: 13px; text-decoration: none;
+}
+a.chip:hover { text-decoration: underline; }
+.chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c-center); opacity: .45; flex: none; }
+.chip.k-left i { background: var(--c-left); opacity: 1; }
+.chip.k-center i { background: var(--c-center); opacity: 1; }
+.chip.k-right i { background: var(--c-right); opacity: 1; }
+.chip.nolink { color: var(--muted); }
+
+/* Blindspots, Kurzmeldungen */
+.block h2 { font: 650 20px/1.25 var(--serif); margin: 48px 0 4px; }
+.block .hint { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+.item { padding: 12px 0; border-top: 1px solid var(--line); }
+.item h4 { margin: 0; font-size: 16px; font-weight: 650; }
+.item p { margin: 3px 0 0; font-size: 15px; }
+.item .meta { font-size: 13px; color: var(--muted); }
+.item .chips { margin-top: 8px; }
+
+/* Quellenansicht */
+.prose p { max-width: 34em; margin: 12px 0; }
+.src-group { margin: 12px 0 4px; font-size: 13px; font-weight: 650; color: var(--muted); }
+.src { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 15px; }
+.src small { color: var(--muted); font-size: 13px; text-align: right; }
+.src .bad { color: var(--warn-ink); background: var(--warn-bg); padding: 0 6px; border-radius: 5px; }
+.srcs > summary { cursor: pointer; font-weight: 650; padding: 12px 0; min-height: 44px; }
+.foot { margin-top: 36px; font-size: 12px; color: var(--muted); }
+
+.state { margin-top: 48px; max-width: 30em; }
+.state h2 { font: 650 22px/1.25 var(--serif); margin: 0 0 8px; }
+
+/* Tabs */
+.tabs {
+  position: fixed; left: 0; right: 0; bottom: 0; display: flex; background: var(--surface);
+  border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom);
+}
+.tabs button {
+  flex: 1; background: none; border: 0; min-height: 54px; font-size: 14px; color: var(--muted); cursor: pointer;
+  box-shadow: inset 0 3px 0 transparent;
+}
+.tabs button[aria-current="page"] { color: var(--ink); font-weight: 650; box-shadow: inset 0 3px 0 var(--accent); }
+
+dialog { border: 0; border-radius: 16px; background: var(--surface); color: var(--ink); padding: 8px 8px 12px; width: min(22rem, calc(100% - 32px)); }
+dialog::backdrop { background: rgba(10, 16, 22, .5); }
+dialog h2 { font: 650 20px/1.2 var(--serif); margin: 12px 12px 6px; }
+dialog ul { list-style: none; margin: 0; padding: 0; max-height: 60vh; overflow: auto; }
+dialog li button { width: 100%; text-align: left; background: none; border: 0; padding: 12px; font-size: 16px; border-radius: 10px; cursor: pointer; min-height: 44px; }
+dialog li button:hover, dialog li button[aria-current="true"] { background: var(--bg); }
+dialog .close { margin: 8px 12px 0; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div>
+      <h1 id="date">Morgenbriefing</h1>
+      <p class="stamp" id="stamp"></p>
+    </div>
+    <button class="pill" id="archiveBtn" type="button" hidden>Archiv</button>
+  </header>
+  <div id="banner" class="banner" hidden></div>
+  <main id="view" tabindex="-1"></main>
+</div>
+
+<nav class="tabs" id="tabs" aria-label="Bereiche">
+  <button type="button" data-tab="de">Deutschland</button>
+  <button type="button" data-tab="world">Welt</button>
+  <button type="button" data-tab="tech">Tech</button>
+  <button type="button" data-tab="sources">Quellen</button>
+</nav>
+
+<dialog id="archive" aria-labelledby="archiveTitle">
+  <h2 id="archiveTitle">Frühere Briefings</h2>
+  <ul id="archiveList"></ul>
+  <button class="pill close" id="archiveClose" type="button">Schließen</button>
+</dialog>
+
+<script>
+(() => {
+'use strict';
+
+const POS = { left_edge: .04, left: .2, center_left: .34, center: .5, center_right: .66, right: .8, right_edge: .96 };
+const CAMP = { left_edge: 'left', left: 'left', center_left: 'left', center: 'center', center_right: 'right', right: 'right', right_edge: 'right' };
+const CAMP_DE = { left: 'links', center: 'Mitte', right: 'rechts' };
+const LEAN_DE = {
+  left_edge: 'linker Rand', left: 'links', center_left: 'Mitte-links', center: 'Mitte', center_right: 'Mitte-rechts',
+  right: 'rechts', right_edge: 'rechter Rand', none: 'ohne Einordnung', unknown: 'ohne Einordnung'
+};
+const ACCESS_DE = { free: '', partial: 'teils Paywall', paywall: 'Paywall' };
+const TITLES = { de: 'Deutschland', world: 'Welt', tech: 'Tech', sources: 'Quellen' };
+
+const state = { doc: null, tab: 'de', date: null, index: { dates: [] }, loadedAt: 0, failed: false };
+const $ = (s) => document.querySelector(s);
+
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid == null || kid === false) continue;
+    n.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return n;
+}
+const safeUrl = (u) => (typeof u === 'string' && /^https?:\/\//i.test(u) ? u : null);
+const berlinToday = () => new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Berlin' }).format(new Date());
+const fmtLong = (iso) => new Intl.DateTimeFormat('de-DE', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(iso + 'T12:00:00'));
+const fmtShort = (iso) => new Intl.DateTimeFormat('de-DE', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso + 'T12:00:00'));
+
+/* ---------- Bausteine ---------- */
+
+function spectrum(sources) {
+  const placed = sources.filter((s) => POS[s.lean] != null);
+  if (!placed.length) return null;
+  const counts = { left: 0, center: 0, right: 0 };
+  placed.forEach((s) => counts[CAMP[s.lean]]++);
+  const other = sources.length - placed.length;
+  const groups = {};
+  placed.forEach((s) => (groups[s.lean] = groups[s.lean] || []).push(s));
+  const dots = [];
+  for (const [lean, arr] of Object.entries(groups)) {
+    arr.forEach((s, i) => {
+      const off = (i - (arr.length - 1) / 2) * 11;
+      dots.push(el('span', { class: 'dot', style: `left: calc(${POS[lean] * 100}% + ${off}px)` }));
+    });
+  }
+  const parts = [];
+  ['left', 'center', 'right'].forEach((c) => counts[c] && parts.push(`${counts[c]} ${CAMP_DE[c]}`));
+  if (other) parts.push(`${other} ohne Einordnung`);
+  const text = 'Quellen: ' + parts.join(', ');
+  const single = counts.left && !counts.right ? 'linken' : (counts.right && !counts.left ? 'rechten' : null);
+  return el('div', { class: 'spectrum', role: 'img', 'aria-label': text + (single ? `. Nur Quellen aus dem ${single} Lager.` : '') },
+    el('div', { class: 'track' }, dots),
+    el('div', { class: 'ends', 'aria-hidden': 'true' }, el('span', null, 'links'), el('span', null, 'rechts')),
+    el('p', { class: 'spec-note' }, text),
+    single && el('span', { class: 'spec-note spec-warn' }, `Nur Quellen aus dem ${single} Lager`)
+  );
+}
+
+function chip(s) {
+  const cls = 'chip' + (s.camp ? ' k-' + s.camp : '');
+  const label = `${s.name}${s.camp ? ' (' + CAMP_DE[s.camp] + ')' : ''}`;
+  const url = safeUrl(s.url);
+  if (url) return el('a', { class: cls, href: url, target: '_blank', rel: 'noopener noreferrer', 'aria-label': label }, el('i'), s.name);
+  return el('span', { class: cls + ' nolink', title: 'Kein geprüfter Link vorhanden' }, el('i'), s.name);
+}
+
+function view(kind, title, text, emptyText) {
+  return el('section', { class: 'view ' + kind },
+    el('h4', null, title),
+    el('p', text ? null : { class: 'none' }, text || emptyText));
+}
+
+function story(st, first) {
+  const srcs = st.sources || [];
+  const hasL = srcs.some((s) => s.camp === 'left');
+  const hasR = srcs.some((s) => s.camp === 'right');
+  const hasViews = st.left || st.right || st.disputed;
+  return el('article', { class: 'story' },
+    el('h3', null, st.title),
+    spectrum(srcs),
+    el('h4', { class: 'sub' }, 'Gesichert'),
+    el('ul', { class: 'facts' }, (st.facts || []).map((f) => el('li', null, f))),
+    st.consulting_angle && el('div', { class: 'angle' }, el('b', null, 'Consulting-Blick'), st.consulting_angle),
+    hasViews && el('details', { class: 'views', open: first },
+      el('summary', null, 'Wie die Lager es sehen'),
+      el('div', { class: 'panel' },
+        (st.left || st.right) && view('left', 'Links', st.left, hasL ? 'Keine eigene Rahmung erkennbar.' : 'Dazu liegen keine linken Quellen vor.'),
+        (st.left || st.right) && view('right', 'Rechts', st.right, hasR ? 'Keine eigene Rahmung erkennbar.' : 'Dazu liegen keine rechten Quellen vor.'),
+        st.disputed && view('open', 'Strittig oder offen', st.disputed))),
+    st.paywall_note && el('p', { class: 'paywall' }, 'Paywall: ' + st.paywall_note),
+    srcs.length ? el('div', { class: 'chips' }, srcs.map(chip)) : null,
+    st.unverified && el('p', { class: 'paywall' }, 'Für diese Story liegt kein geprüfter Quellenlink vor. Bitte mit Vorsicht lesen.'));
+}
+
+function blindspots(list) {
+  if (!list || !list.length) return null;
+  return el('section', { class: 'block' },
+    el('h2', null, 'Nur eine Seite berichtet'),
+    el('p', { class: 'hint' }, 'Themen, die ein Lager prominent bringt und das andere kaum aufgreift.'),
+    list.map((b) => el('div', { class: 'item' },
+      el('h4', null, b.title),
+      b.side && el('p', { class: 'meta' }, `Prominent bei ${b.side === 'links' ? 'linken' : 'rechten'} Medien`),
+      el('p', null, b.note),
+      b.sources && b.sources.length ? el('div', { class: 'chips' }, b.sources.map(chip)) : null)));
+}
+
+function kurz(list) {
+  if (!list || !list.length) return null;
+  return el('section', { class: 'block' },
+    el('h2', null, 'Kurz notiert'),
+    list.map((k) => {
+      const url = safeUrl(k.source && k.source.url);
+      const title = url ? el('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, k.title) : k.title;
+      return el('div', { class: 'item' },
+        el('h4', null, title),
+        k.summary && el('p', null, k.summary),
+        k.source && el('p', { class: 'meta' }, k.source.name + (k.source.camp ? ', ' + CAMP_DE[k.source.camp] : '')));
+    }));
+}
+
+function section(key) {
+  const sec = state.doc.sections && state.doc.sections[key];
+  if (!sec) return el('div', { class: 'state' }, el('h2', null, 'Bereich fehlt'), el('p', null, 'Für diesen Bereich liegen keine Daten vor.'));
+  if (sec.error) {
+    return el('div', { class: 'state' },
+      el('h2', null, 'Dieser Bereich konnte nicht erstellt werden'),
+      el('p', null, sec.error),
+      el('p', { class: 'meta' }, 'Der nächste automatische Lauf versucht es erneut. Sofort geht es in GitHub unter Actions mit „Run workflow“.'));
+  }
+  const frag = document.createDocumentFragment();
+  if (sec.tageslage) frag.append(el('p', { class: 'lede' }, sec.tageslage));
+  (sec.stories || []).forEach((s, i) => frag.append(story(s, i === 0)));
+  [blindspots(sec.blindspots), kurz(sec.kurz)].forEach((n) => n && frag.append(n));
+  return frag;
+}
+
+function sourcesView() {
+  const m = (state.doc && state.doc.meta) || {};
+  const frag = document.createDocumentFragment();
+  frag.append(el('section', { class: 'prose' },
+    el('p', null, 'Jeden Morgen holt ein Skript die Meldungen der unten stehenden Quellen. Claude gleicht sie ab, trennt gesicherte Fakten von Deutungen und stellt die Sicht linker und rechter Medien nebeneinander. Bei Paywalls sucht Claude frei zugängliche Quellen zur selben Meldung.'),
+    el('p', null, 'Die Einordnung der Medien ist grob und eine Konfigurationsentscheidung, keine Tatsache. Zusammenfassungen sind KI-generiert: Prüfe wichtige Details in den Originalquellen.')));
+  const status = m.feed_status || {};
+  Object.entries(m.sources || {}).forEach(([key, list]) => {
+    const st = {};
+    (status[key] || []).forEach((x) => (st[x.name] = x));
+    const ok = list.filter((s) => st[s.name] && st[s.name].ok).length;
+    const d = el('details', { class: 'srcs' }, el('summary', null, `${TITLES[key] || key}: ${list.length} Quellen` + ((status[key] || []).length ? `, ${ok} erreicht` : '')));
+    [['left', 'Linkes Lager'], ['center', 'Mitte'], ['right', 'Rechtes Lager'], [null, 'Ohne Einordnung']].forEach(([camp, label]) => {
+      const rows = list.filter((s) => (CAMP[s.lean] || null) === camp);
+      if (!rows.length) return;
+      d.append(el('p', { class: 'src-group' }, label));
+      rows.forEach((s) => {
+        const reached = st[s.name] ? st[s.name].ok : null;
+        const bits = [LEAN_DE[s.lean] || '', s.role === 'perspective' ? 'nur Einordnung' : '', ACCESS_DE[s.access] || ''].filter(Boolean).join(', ');
+        d.append(el('div', { class: 'src' }, el('span', null, s.name),
+          el('small', null, bits, reached === false ? el('span', { class: 'bad' }, ' Feed nicht erreichbar') : null)));
+      });
+    });
+    frag.append(d);
+  });
+  if (m.model) {
+    frag.append(el('p', { class: 'foot' },
+      `Modell ${m.model}, Websuche ${m.web_search ? 'an' : 'aus'}, ${m.tokens_in || 0} Tokens ein, ${m.tokens_out || 0} aus.`));
+  }
+  return frag;
+}
+
+/* ---------- Seite ---------- */
+
+function setBanner(node) {
+  const b = $('#banner');
+  b.replaceChildren();
+  if (node) { b.append(node); b.hidden = false; } else { b.hidden = true; }
+}
+
+function render() {
+  const view = $('#view');
+  view.replaceChildren();
+  document.querySelectorAll('#tabs button').forEach((b) => {
+    if (b.dataset.tab === state.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  $('#archiveBtn').hidden = !(state.index.dates && state.index.dates.length > 1);
+
+  if (!state.doc) {
+    $('#date').textContent = 'Morgenbriefing';
+    $('#stamp').textContent = '';
+    setBanner(null);
+    view.append(el('div', { class: 'state' },
+      el('h2', null, state.failed ? 'Briefing nicht erreichbar' : 'Noch kein Briefing'),
+      el('p', null, state.failed
+        ? 'Die Daten konnten nicht geladen werden. Prüfe die Internetverbindung und öffne die App erneut.'
+        : 'Starte in GitHub unter Actions den Workflow „Morgenbriefing“ einmal mit „Run workflow“. Danach erscheint hier das erste Briefing.')));
+    return;
+  }
+
+  const m = state.doc.meta || {};
+  $('#date').textContent = m.date ? fmtLong(m.date) : 'Morgenbriefing';
+  let stamp = '';
+  if (m.generated_at) {
+    const t = new Date(m.generated_at);
+    if (!isNaN(t)) stamp = 'Erstellt um ' + new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' }).format(t) + ' Uhr';
+  }
+  $('#stamp').textContent = stamp;
+
+  const latest = state.index.latest || m.date;
+  if (m.sample) {
+    setBanner(document.createTextNode('Beispieldaten: Nach dem ersten erfolgreichen Lauf erscheint hier dein echtes Briefing.'));
+  } else if (state.date && state.date !== latest) {
+    const back = el('button', { type: 'button', onclick: () => loadDay(null) }, 'Zum aktuellen Briefing');
+    setBanner(el('span', null, `Archiv vom ${fmtShort(m.date)}. `, back));
+  } else if (m.date && m.date < berlinToday()) {
+    setBanner(document.createTextNode(`Das Briefing von heute liegt noch nicht vor. Angezeigt wird der Stand vom ${fmtShort(m.date)}.`));
+  } else {
+    setBanner(null);
+  }
+
+  view.append(state.tab === 'sources' ? sourcesView() : section(state.tab));
+}
+
+async function getJSON(url) {
+  const r = await fetch(url, { cache: 'no-cache' });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+async function loadDay(date) {
+  try {
+    if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('Datum');
+    state.doc = await getJSON(date ? `data/${date}.json` : 'data/latest.json');
+    state.date = date;
+    state.failed = false;
+    state.loadedAt = Date.now();
+  } catch (e) {
+    state.doc = null;
+    state.failed = !!date || navigator.onLine === false;
+  }
+  render();
+  window.scrollTo(0, 0);
+}
+
+async function init() {
+  try { state.index = await getJSON('data/index.json'); } catch (e) { state.index = { dates: [] }; }
+  await loadDay(null);
+}
+
+/* ---------- Ereignisse ---------- */
+
+$('#tabs').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-tab]');
+  if (!b) return;
+  state.tab = b.dataset.tab;
+  render();
+  window.scrollTo(0, 0);
+});
+
+const dlg = $('#archive');
+$('#archiveBtn').addEventListener('click', () => {
+  const list = $('#archiveList');
+  list.replaceChildren();
+  (state.index.dates || []).forEach((d) => {
+    const cur = (state.date || state.index.latest) === d;
+    list.append(el('li', null, el('button', {
+      type: 'button', 'aria-current': cur ? 'true' : null,
+      onclick: () => { closeDlg(); loadDay(d === state.index.latest ? null : d); }
+    }, fmtShort(d))));
+  });
+  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+});
+function closeDlg() { if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); }
+$('#archiveClose').addEventListener('click', closeDlg);
+dlg.addEventListener('click', (e) => { if (e.target === dlg) closeDlg(); });
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !state.date && Date.now() - state.loadedAt > 30 * 60 * 1000) init();
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
+init();
+})();
+</script>
+</body>
+</html>

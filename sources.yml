@@ -1,0 +1,95 @@
+# Quellenliste für das Morgenbriefing
+# ------------------------------------------------------------------
+# lean (grobe Einordnung, nach gängigen Medienanalysen; bewusst anpassbar):
+#   left_edge | left | center_left | center | center_right | right | right_edge | none
+# role:
+#   fact        = darf als Faktenquelle dienen
+#   perspective = dient nur zur Einordnung/Rahmung, nie als alleinige Faktenbasis
+# access:
+#   free | partial | paywall   (partial/paywall: oft nur Teaser im Feed)
+# enabled: false  = Quelle vorübergehend ausschalten
+#
+# Hinweis: Feed-URLs ändern sich gelegentlich. Mit "Check feeds" (siehe README)
+# siehst du, welche Feeds erreichbar sind. Reuters/AP/dpa bieten keine freien
+# RSS-Feeds an und werden über die Websuche einbezogen.
+
+settings:
+  max_age_hours: 30          # nur Meldungen der letzten Stunden berücksichtigen
+  max_items_per_source: 8    # pro Quelle und Lauf
+
+sections:
+  de:
+    title: Deutschland
+    max_stories: 6
+    focus: >
+      Politik, Gesellschaft, Wirtschaft und Justiz in Deutschland, dazu wichtige
+      Landesthemen mit bundesweiter Bedeutung. Wichtigstes zuerst.
+    sources:
+      # Neutral / öffentlich-rechtlich
+      - {name: Tagesschau,        feed: "https://www.tagesschau.de/index~rss2.xml",          lean: center,       role: fact,        access: free}
+      - {name: ZDF heute,         feed: "https://www.zdf.de/rss/zdf/nachrichten",            lean: center,       role: fact,        access: free}
+      - {name: Deutschlandfunk,   feed: "https://www.deutschlandfunk.de/nachrichten-100.rss", lean: center,       role: fact,        access: free}
+      # Links
+      - {name: Süddeutsche Zeitung, feed: "https://rss.sueddeutsche.de/rss/Topthemen",        lean: center_left,  role: fact,        access: partial}
+      - {name: Der Spiegel,       feed: "https://www.spiegel.de/schlagzeilen/index.rss",     lean: center_left,  role: fact,        access: partial}
+      - {name: Die Zeit,          feed: "https://newsfeed.zeit.de/index",                    lean: center_left,  role: fact,        access: partial}
+      - {name: Frankfurter Rundschau, feed: "https://www.fr.de/rssfeed.rdf",                 lean: left,         role: fact,        access: partial}
+      - {name: taz,               feed: "https://taz.de/!p4608;rss/",                        lean: left,         role: fact,        access: free}
+      - {name: Der Freitag,       feed: "https://www.freitag.de/@@RSS",                      lean: left,         role: perspective, access: partial}
+      - {name: nd,                feed: "https://www.nd-aktuell.de/rss.php",                 lean: left_edge,    role: perspective, access: partial}
+      - {name: junge Welt,        feed: "https://www.jungewelt.de/feeds/newsticker.rss",     lean: left_edge,    role: perspective, access: partial}
+      # Rechts
+      - {name: FAZ,               feed: "https://www.faz.net/rss/aktuell/",                  lean: center_right, role: fact,        access: paywall}
+      - {name: Welt,              feed: "https://www.welt.de/feeds/latest.rss",              lean: center_right, role: fact,        access: partial}
+      - {name: NZZ,               feed: "https://www.nzz.ch/recent.rss",                     lean: center_right, role: fact,        access: paywall}
+      - {name: Cicero,            feed: "https://www.cicero.de/rss.xml",                     lean: center_right, role: perspective, access: partial}
+      - {name: Tichys Einblick,   feed: "https://www.tichyseinblick.de/feed/",               lean: right,        role: perspective, access: free}
+      - {name: Apollo News,       feed: "https://apollo-news.net/feed/",                     lean: right,        role: perspective, access: free}
+      - {name: Junge Freiheit,    feed: "https://jungefreiheit.de/feed/",                    lean: right_edge,   role: perspective, access: partial}
+
+  world:
+    title: Welt
+    max_stories: 6
+    focus: >
+      Weltpolitik, Konflikte, Wirtschaft und Märkte mit globaler Bedeutung,
+      Europa/EU, USA, Asien, Naher Osten. Wichtigstes zuerst.
+    sources:
+      # Neutral / international
+      - {name: BBC News,          feed: "https://feeds.bbci.co.uk/news/world/rss.xml",       lean: center,       role: fact,        access: free}
+      - {name: Deutsche Welle,    feed: "https://rss.dw.com/rdf/rss-en-all",                 lean: center,       role: fact,        access: free}
+      - {name: France 24,         feed: "https://www.france24.com/en/rss",                   lean: center,       role: fact,        access: free}
+      - {name: Tagesschau Ausland, feed: "https://www.tagesschau.de/ausland/index~rss2.xml", lean: center,       role: fact,        access: free}
+      # Links
+      - {name: The Guardian,      feed: "https://www.theguardian.com/world/rss",             lean: left,         role: fact,        access: free}
+      - {name: The New York Times, feed: "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", lean: center_left, role: fact, access: paywall}
+      - {name: The Washington Post, feed: "https://feeds.washingtonpost.com/rss/world",     lean: center_left,  role: fact,        access: paywall}
+      - {name: NPR,               feed: "https://feeds.npr.org/1004/rss.xml",                lean: center_left,  role: fact,        access: free}
+      - {name: The Independent,   feed: "https://www.independent.co.uk/news/world/rss",      lean: center_left,  role: fact,        access: partial}
+      # Rechts
+      - {name: The Telegraph,     feed: "https://www.telegraph.co.uk/rss.xml",               lean: right,        role: fact,        access: paywall}
+      - {name: Fox News,          feed: "https://moxie.foxnews.com/google-publisher/world.xml", lean: right,     role: fact,        access: free}
+      - {name: The Spectator,     feed: "https://www.spectator.co.uk/feed",                  lean: right,        role: perspective, access: partial}
+      - {name: National Review,   feed: "https://www.nationalreview.com/feed/",              lean: right,        role: perspective, access: partial}
+      - {name: WSJ Opinion,       feed: "https://feeds.a.dj.com/rss/RSSOpinion.xml",         lean: right,        role: perspective, access: paywall}
+
+  tech:
+    title: Tech
+    max_stories: 6
+    focus: >
+      Aktuelle Technikthemen weltweit: KI, Cloud, Cybersecurity, Software,
+      Plattformen, Halbleiter, Digitalpolitik. Die Leserschaft arbeitet im
+      IT-Consulting; priorisiere, was für IT-Projekte, Architekturentscheidungen
+      und Kundengespräche relevant sein kann. Zu jeder Story einen kurzen
+      Consulting-Blick liefern.
+    sources:
+      - {name: heise online,      feed: "https://www.heise.de/rss/heise-atom.xml",           lean: none,         role: fact,        access: partial}
+      - {name: Golem.de,          feed: "https://rss.golem.de/rss.php?feed=RSS2.0",          lean: none,         role: fact,        access: partial}
+      - {name: The Verge,         feed: "https://www.theverge.com/rss/index.xml",             lean: none,         role: fact,        access: free}
+      - {name: Ars Technica,      feed: "https://feeds.arstechnica.com/arstechnica/index",    lean: none,         role: fact,        access: free}
+      - {name: TechCrunch,        feed: "https://techcrunch.com/feed/",                      lean: none,         role: fact,        access: free}
+      - {name: The Register,      feed: "https://www.theregister.com/headlines.atom",        lean: none,         role: fact,        access: free}
+      - {name: MIT Technology Review, feed: "https://www.technologyreview.com/feed/",       lean: none,         role: fact,        access: partial}
+      - {name: Hacker News,       feed: "https://hnrss.org/frontpage",                       lean: none,         role: perspective, access: free}
+      # Digitalpolitik (für politische Tech-Themen)
+      - {name: netzpolitik.org,   feed: "https://netzpolitik.org/feed/",                     lean: left,         role: perspective, access: free}
+      - {name: Reason,            feed: "https://reason.com/feed/",                          lean: right,        role: perspective, access: free}
